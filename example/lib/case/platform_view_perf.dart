@@ -16,13 +16,18 @@ class PlatformViewPerfState extends State<PlatformViewPerf> {
   final url = 'https://flutter.dev';
   final String viewType = '<simple-text-view>';
 
+  late WebViewController controller;
+
   @override
   void initState() {
     super.initState();
     if (usingHybridComposition) {
       // Enable hybrid composition.
-      if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+      // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
     }
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse(url));
   }
 
   @override
@@ -55,8 +60,8 @@ class PlatformViewPerfState extends State<PlatformViewPerf> {
                       'Open flutter page',
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                     )),
-                onTap: () => BoostNavigator.instance
-                    .push("flutterPage", withContainer: withContainer),
+                onTap: () =>
+                    BoostNavigator.instance.push("flutterPage", withContainer: withContainer),
               ),
               InkWell(
                 child: Container(
@@ -66,9 +71,8 @@ class PlatformViewPerfState extends State<PlatformViewPerf> {
                       'Open another PlatformView',
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                     )),
-                onTap: () => BoostNavigator.instance.push(
-                    "platformview/listview",
-                    withContainer: withContainer),
+                onTap: () => BoostNavigator.instance
+                    .push("platformview/listview", withContainer: withContainer),
               ),
               Container(
                 width: 1080,
@@ -89,28 +93,22 @@ class PlatformViewPerfState extends State<PlatformViewPerf> {
                     Expanded(
                       child: ListView.builder(
                           itemCount: 1000,
-                          itemBuilder: (BuildContext context, int index) =>
-                              Padding(
+                          itemBuilder: (BuildContext context, int index) => Padding(
                                 padding: const EdgeInsets.only(
-                                    left: 10.0,
-                                    top: 4.0,
-                                    right: 10.0,
-                                    bottom: 4.0),
+                                    left: 10.0, top: 4.0, right: 10.0, bottom: 4.0),
                                 child: Column(
                                   children: <Widget>[
                                     Card(
                                       elevation: 2.0,
                                       child: ListTile(
-                                        title: Text(
-                                            'Flutter ListView item ${index + 1}'),
+                                        title: Text('Flutter ListView item ${index + 1}'),
                                       ),
                                     ),
                                     Card(
                                       elevation: 2.0,
                                       child: SizedBox(
                                         height: 70,
-                                        child: NativeView(
-                                            viewType, usingHybridComposition),
+                                        child: NativeView(viewType, usingHybridComposition),
                                       ),
                                     ),
                                   ],
@@ -119,7 +117,7 @@ class PlatformViewPerfState extends State<PlatformViewPerf> {
                     ),
                     SizedBox(
                       height: 100,
-                      child: WebView(initialUrl: url),
+                      child: WebViewWidget(controller: controller),
                     ),
                   ],
                 ),

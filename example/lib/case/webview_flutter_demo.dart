@@ -15,11 +15,16 @@ class WebViewExampleState extends State<WebViewExample> {
   final url = 'https://flutter.dev';
   final String viewType = '<simple-text-view>';
 
+  late WebViewController controller;
+
   @override
   void initState() {
     super.initState();
     // Enable virtual display.
     // if (Platform.isAndroid) WebView.platform = AndroidWebView();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse(url));
   }
 
   @override
@@ -47,8 +52,7 @@ class WebViewExampleState extends State<WebViewExample> {
                 margin: const EdgeInsets.all(10.0),
                 child: TextFormField(
                   decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      labelText: 'Enter something...'),
+                      border: UnderlineInputBorder(), labelText: 'Enter something...'),
                 ),
               ),
               InkWell(
@@ -59,8 +63,8 @@ class WebViewExampleState extends State<WebViewExample> {
                       'Open flutter page',
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                     )),
-                onTap: () => BoostNavigator.instance
-                    .push("flutterPage", withContainer: withContainer),
+                onTap: () =>
+                    BoostNavigator.instance.push("flutterPage", withContainer: withContainer),
               ),
               InkWell(
                 child: Container(
@@ -70,8 +74,7 @@ class WebViewExampleState extends State<WebViewExample> {
                       'Open another webview',
                       style: TextStyle(fontSize: 20.0, color: Colors.black),
                     )),
-                onTap: () => BoostNavigator.instance
-                    .push("webview", withContainer: withContainer),
+                onTap: () => BoostNavigator.instance.push("webview", withContainer: withContainer),
               ),
               Expanded(
                 child: Column(
@@ -97,22 +100,23 @@ class WebViewExampleState extends State<WebViewExample> {
                       children: <Widget>[
                         if (visible)
                           Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.blue, width: 5.0)),
+                            decoration:
+                                BoxDecoration(border: Border.all(color: Colors.blue, width: 5.0)),
                             width: 400,
                             height: 300,
                             margin: const EdgeInsets.all(10.0),
-                            child: WebView(
-                              initialUrl: url,
+                            // child: WebView(
+                            //   initialUrl: url,
+                            // ),
+                            child: WebViewWidget(
+                              controller: controller,
                             ),
                           ),
                         Opacity(
                           opacity: visible ? 1.0 : 0.5,
                           child: Container(
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.red, width: 5.0)),
+                            decoration:
+                                BoxDecoration(border: Border.all(color: Colors.red, width: 5.0)),
                             width: 200,
                             height: 200,
                             margin: const EdgeInsets.all(10.0),
@@ -120,9 +124,8 @@ class WebViewExampleState extends State<WebViewExample> {
                           ),
                         ),
                         Container(
-                          decoration: BoxDecoration(
-                              border:
-                                  Border.all(color: Colors.blue, width: 5.0)),
+                          decoration:
+                              BoxDecoration(border: Border.all(color: Colors.blue, width: 5.0)),
                           width: 100,
                           height: 100,
                           margin: const EdgeInsets.all(10.0),

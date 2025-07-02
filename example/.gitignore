@@ -8,3 +8,6 @@
 build/
 pubspec.lock
 .flutter-plugins
+
+# FVM Version Cache
+.fvm/

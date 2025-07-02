@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'dart:io' show Platform;
 
 class BottomNavigationPage extends StatefulWidget {
   const BottomNavigationPage({Key? key}) : super(key: key);
@@ -17,11 +16,10 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
   void initState() {
     super.initState();
     // Enable hybrid composition.
-    if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
+    // if (Platform.isAndroid) WebView.platform = SurfaceAndroidWebView();
   }
 
-  Route<dynamic> normal(Widget widget, RouteSettings settings) =>
-      MaterialPageRoute<Widget>(
+  Route<dynamic> normal(Widget widget, RouteSettings settings) => MaterialPageRoute<Widget>(
         settings: settings,
         builder: (BuildContext context) => widget,
       );
@@ -64,26 +62,55 @@ class _BottomNavigationPageState extends State<BottomNavigationPage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.music_note), label: 'Music'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.notifications), label: 'Notifications'),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications), label: 'Notifications'),
         ],
       ),
     );
   }
 }
 
-class Test1 extends StatelessWidget {
+class Test1 extends StatefulWidget {
   const Test1({Key? key}) : super(key: key);
 
   @override
+  State<Test1> createState() => _Test1State();
+}
+
+class _Test1State extends State<Test1> {
+  late WebViewController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..loadRequest(Uri.parse("https://flutter.dev"));
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return const WebView(
-      initialUrl: 'https://flutter.dev',
-      javascriptMode: JavascriptMode.unrestricted,
-      //   backgroundColor: Color(0x00000000),
-    );
+    return WebViewWidget(controller: controller);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
+
+// class Test1 extends StatelessWidget {
+//   const Test1({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     // return const WebView(
+//     //   initialUrl: 'https://flutter.dev',
+//     //   javascriptMode: JavascriptMode.unrestricted,
+//     //   //   backgroundColor: Color(0x00000000),
+//     // );
+//     return WebViewWidget(controller: controller);
+//   }
+// }
 
 class Test2 extends StatelessWidget {
   const Test2({Key? key}) : super(key: key);
