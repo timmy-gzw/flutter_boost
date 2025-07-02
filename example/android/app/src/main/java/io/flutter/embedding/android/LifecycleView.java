@@ -14,207 +14,234 @@ import androidx.lifecycle.LifecycleRegistry;
 
 import com.idlefish.flutterboost.FlutterBoostUtils;
 
+import io.flutter.FlutterInjector;
 import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.embedding.engine.FlutterShellArgs;
 import io.flutter.plugin.platform.PlatformPlugin;
-import io.flutter.view.FlutterMain;
+
 import java.util.List;
 
 public class LifecycleView extends FrameLayout implements LifecycleOwner, FlutterActivityAndFragmentDelegate.Host {
-  protected static final String ARG_DART_ENTRYPOINT = "dart_entrypoint";
-  protected static final String ARG_INITIAL_ROUTE = "initial_route";
-  protected static final String ARG_APP_BUNDLE_PATH = "app_bundle_path";
-  protected static final String ARG_FLUTTER_INITIALIZATION_ARGS = "initialization_args";
-  protected static final String ARG_FLUTTERVIEW_RENDER_MODE = "flutterview_render_mode";
-  protected static final String ARG_FLUTTERVIEW_TRANSPARENCY_MODE = "flutterview_transparency_mode";
-  protected static final String ARG_CACHED_ENGINE_ID = "cached_engine_id";
+    protected static final String ARG_DART_ENTRYPOINT = "dart_entrypoint";
+    protected static final String ARG_INITIAL_ROUTE = "initial_route";
+    protected static final String ARG_APP_BUNDLE_PATH = "app_bundle_path";
+    protected static final String ARG_FLUTTER_INITIALIZATION_ARGS = "initialization_args";
+    protected static final String ARG_FLUTTERVIEW_RENDER_MODE = "flutterview_render_mode";
+    protected static final String ARG_FLUTTERVIEW_TRANSPARENCY_MODE = "flutterview_transparency_mode";
+    protected static final String ARG_CACHED_ENGINE_ID = "cached_engine_id";
 
-  private final Activity mActivty;
-  private View mView;
-  private FlutterView mFlutterView;
-  private Bundle mArguments;
-  private FlutterActivityAndFragmentDelegate mDelegate;
-  private PlatformPlugin platformPlugin;
-  private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
+    private final Activity mActivty;
+    private View mView;
+    private FlutterView mFlutterView;
+    private Bundle mArguments;
+    private FlutterActivityAndFragmentDelegate mDelegate;
+    private PlatformPlugin platformPlugin;
+    private LifecycleRegistry mLifecycleRegistry = new LifecycleRegistry(this);
 
-  public LifecycleView(Activity context) {
-    super(context);
-    mActivty = context;
-  }
+    public LifecycleView(Activity context) {
+        super(context);
+        mActivty = context;
+    }
 
-  public boolean shouldDispatchAppLifecycleState() { return true; }
-  public void updateSystemUiOverlays() {}
-  public String getDartEntrypointLibraryUri() { return null; }
-  public ExclusiveAppComponent<Activity> getExclusiveAppComponent() { return mDelegate; }
-  public List<String> getDartEntrypointArgs() { return null; }
-  public String getCachedEngineGroupId() { return null; }
+    public boolean shouldDispatchAppLifecycleState() {
+        return true;
+    }
 
-  public void setArguments(Bundle args) {
-    mArguments = args;
-  }
+    public void updateSystemUiOverlays() {
+    }
 
-  public Bundle getArguments() {
-    return mArguments;
-  }
+    public String getDartEntrypointLibraryUri() {
+        return null;
+    }
 
-  public FlutterView flutterView() {
-    return mFlutterView;
-  }
+    public ExclusiveAppComponent<Activity> getExclusiveAppComponent() {
+        return mDelegate;
+    }
 
-  public void onCreate() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
-    mDelegate = new FlutterActivityAndFragmentDelegate(this);
-    mDelegate.onAttach(getContext());
-    mView = mDelegate.onCreateView(null, null, null, 0, false);
-    addView(mView);
-    mFlutterView = FlutterBoostUtils.findFlutterView(mView);
-  }
+    public List<String> getDartEntrypointArgs() {
+        return null;
+    }
 
-  public void onStart() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
-    mDelegate.onStart();
-  }
+    public String getCachedEngineGroupId() {
+        return null;
+    }
 
-  public void onResume() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
-    platformPlugin = new PlatformPlugin(getActivity(), getFlutterEngine().getPlatformChannel(), this);
-    mDelegate.onResume();
-  }
+    public void setArguments(Bundle args) {
+        mArguments = args;
+    }
 
-  public void onPause() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
-    platformPlugin = null;
-    mDelegate.onPause();
-  }
+    public Bundle getArguments() {
+        return mArguments;
+    }
 
-  public void onStop() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
-    // delegate.onStop();
-  }
+    public FlutterView flutterView() {
+        return mFlutterView;
+    }
 
-  public void onDestroy() {
-    mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
-    mDelegate.onDestroyView();
-    removeView(mView);
-    mDelegate = null;
-    mView = null;
-  }
+    public void onCreate() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_CREATE);
+        mDelegate = new FlutterActivityAndFragmentDelegate(this);
+        mDelegate.onAttach(getContext());
+        mView = mDelegate.onCreateView(null, null, null, 0, false);
+        addView(mView);
+        mFlutterView = FlutterBoostUtils.findFlutterView(mView);
+    }
 
-  @Nullable
-  protected FlutterEngine getFlutterEngine() {
-    return mDelegate.getFlutterEngine();
-  }
+    public void onStart() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_START);
+        mDelegate.onStart();
+    }
 
-  /**
-   * /////////////////////////////////////////////
-   * FlutterActivityAndFragmentDelegate.Host
-   * /////////////////////////////////////////////
-   */
-  public void detachFromFlutterEngine() {
-    // Do nothing
-  }
+    public void onResume() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_RESUME);
+        platformPlugin = new PlatformPlugin(getActivity(), getFlutterEngine().getPlatformChannel(), this);
+        mDelegate.onResume();
+    }
 
-  public boolean shouldHandleDeeplinking() { return false; }
-  public boolean popSystemNavigator() { return false; }
+    public void onPause() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_PAUSE);
+        platformPlugin = null;
+        mDelegate.onPause();
+    }
 
-  @Nullable
-  public Activity getActivity() {
-    return mActivty;
-  }
+    public void onStop() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_STOP);
+        // delegate.onStop();
+    }
 
-  @NonNull
-  public Lifecycle getLifecycle() {
-    return mLifecycleRegistry;
-  }
+    public void onDestroy() {
+        mLifecycleRegistry.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY);
+        mDelegate.onDestroyView();
+        removeView(mView);
+        mDelegate = null;
+        mView = null;
+    }
 
-  @NonNull
-  public FlutterShellArgs getFlutterShellArgs() {
-    String[] flutterShellArgsArray = getArguments().getStringArray(ARG_FLUTTER_INITIALIZATION_ARGS);
-    return new FlutterShellArgs(
-        flutterShellArgsArray != null ? flutterShellArgsArray : new String[] {});
-  }
+    @Nullable
+    protected FlutterEngine getFlutterEngine() {
+        return mDelegate.getFlutterEngine();
+    }
 
-  @Nullable
-  public String getCachedEngineId() {
-    return getArguments().getString(ARG_CACHED_ENGINE_ID, null);
-  }
+    /**
+     * /////////////////////////////////////////////
+     * FlutterActivityAndFragmentDelegate.Host
+     * /////////////////////////////////////////////
+     */
+    public void detachFromFlutterEngine() {
+        // Do nothing
+    }
 
-  public boolean shouldDestroyEngineWithHost() {
-    return false;
-  }
+    public boolean shouldHandleDeeplinking() {
+        return false;
+    }
 
-  @NonNull
-  public String getDartEntrypointFunctionName() {
-    return getArguments().getString(ARG_DART_ENTRYPOINT, "main");
-  }
+    public boolean popSystemNavigator() {
+        return false;
+    }
 
-  @NonNull
-  public String getAppBundlePath() {
-    return getArguments().getString(ARG_APP_BUNDLE_PATH, FlutterMain.findAppBundlePath());
-  }
+    @Nullable
+    public Activity getActivity() {
+        return mActivty;
+    }
 
-  @Nullable
-  public String getInitialRoute() {
-    return getArguments().getString(ARG_INITIAL_ROUTE);
-  }
+    @NonNull
+    public Lifecycle getLifecycle() {
+        return mLifecycleRegistry;
+    }
 
-  @NonNull
-  public RenderMode getRenderMode() {
-    String renderModeName =
-    getArguments().getString(ARG_FLUTTERVIEW_RENDER_MODE, RenderMode.surface.name());
-    return RenderMode.valueOf(renderModeName);
-  }
+    @NonNull
+    public FlutterShellArgs getFlutterShellArgs() {
+        String[] flutterShellArgsArray = getArguments().getStringArray(ARG_FLUTTER_INITIALIZATION_ARGS);
+        return new FlutterShellArgs(
+                flutterShellArgsArray != null ? flutterShellArgsArray : new String[]{});
+    }
 
-  @NonNull
-  public TransparencyMode getTransparencyMode() {
-    String transparencyModeName =
-        getArguments()
-            .getString(ARG_FLUTTERVIEW_TRANSPARENCY_MODE, TransparencyMode.transparent.name());
-    return TransparencyMode.valueOf(transparencyModeName);
-  }
+    @Nullable
+    public String getCachedEngineId() {
+        return getArguments().getString(ARG_CACHED_ENGINE_ID, null);
+    }
 
-  @Nullable
-  public FlutterEngine provideFlutterEngine(@NonNull Context context) {
-    return null;
-  }
+    public boolean shouldDestroyEngineWithHost() {
+        return false;
+    }
 
-  @Nullable
-  public PlatformPlugin providePlatformPlugin(
-      @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
-    return null;
-  }
+    @NonNull
+    public String getDartEntrypointFunctionName() {
+        return getArguments().getString(ARG_DART_ENTRYPOINT, "main");
+    }
 
-  public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-  }
+    @NonNull
+    public String getAppBundlePath() {
+        return getArguments().getString(ARG_APP_BUNDLE_PATH, FlutterInjector.instance().flutterLoader().findAppBundlePath());
+    }
 
-  public void cleanUpFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-  }
+    @Nullable
+    public String getInitialRoute() {
+        return getArguments().getString(ARG_INITIAL_ROUTE);
+    }
 
-  public boolean shouldAttachEngineToActivity() {
-    return true;
-  }
+    @NonNull
+    public RenderMode getRenderMode() {
+        String renderModeName =
+                getArguments().getString(ARG_FLUTTERVIEW_RENDER_MODE, RenderMode.surface.name());
+        return RenderMode.valueOf(renderModeName);
+    }
 
-  public boolean attachToEngineAutomatically() {
-    return false;
-  }
+    @NonNull
+    public TransparencyMode getTransparencyMode() {
+        String transparencyModeName =
+                getArguments()
+                        .getString(ARG_FLUTTERVIEW_TRANSPARENCY_MODE, TransparencyMode.transparent.name());
+        return TransparencyMode.valueOf(transparencyModeName);
+    }
 
-  public boolean shouldRestoreAndSaveState() {
-    return false;
-  }
+    @Nullable
+    public FlutterEngine provideFlutterEngine(@NonNull Context context) {
+        return null;
+    }
 
-  public void onFlutterSurfaceViewCreated(@NonNull FlutterSurfaceView flutterSurfaceView) {
-    // Hook for subclasses.
-  }
+    @Nullable
+    public PlatformPlugin providePlatformPlugin(
+            @Nullable Activity activity, @NonNull FlutterEngine flutterEngine) {
+        return null;
+    }
 
-  public void onFlutterTextureViewCreated(@NonNull FlutterTextureView flutterTextureView) {
-    // Hook for subclasses.
-  }
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+    }
 
-  public void onFlutterUiDisplayed() {
-    // Hook for subclasses.
-  }
+    public void cleanUpFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+    }
 
-  public void onFlutterUiNoLongerDisplayed() {
-    // Hook for subclasses.
-  }
+    public boolean shouldAttachEngineToActivity() {
+        return true;
+    }
+
+    public boolean attachToEngineAutomatically() {
+        return false;
+    }
+
+    @Override
+    public boolean getBackCallbackState() {
+        return false;
+    }
+
+    public boolean shouldRestoreAndSaveState() {
+        return false;
+    }
+
+    public void onFlutterSurfaceViewCreated(@NonNull FlutterSurfaceView flutterSurfaceView) {
+        // Hook for subclasses.
+    }
+
+    public void onFlutterTextureViewCreated(@NonNull FlutterTextureView flutterTextureView) {
+        // Hook for subclasses.
+    }
+
+    public void onFlutterUiDisplayed() {
+        // Hook for subclasses.
+    }
+
+    public void onFlutterUiNoLongerDisplayed() {
+        // Hook for subclasses.
+    }
 }

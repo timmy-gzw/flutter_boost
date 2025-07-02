@@ -10,7 +10,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import com.idlefish.flutterboost.FlutterBoost;
 import com.idlefish.flutterboost.containers.FlutterBoostFragment;
 import com.idlefish.flutterboost.example.R;
 
@@ -115,18 +114,14 @@ public class TabMainActivity extends FragmentActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         resetImages();
-        switch (view.getId()) {
-            case R.id.mes:
-                setSelect(0);
-                break;
-            case R.id.friend:
-                setSelect(1);
-                break;
-            case R.id.address:
-                setSelect(2);
-                break;
+        int id = view.getId();
+        if (id == R.id.mes) {
+            setSelect(0);
+        } else  if (id == R.id.friend) {
+            setSelect(1);
+        } else   if (id == R.id.address) {
+            setSelect(2);
         }
-
     }
 
     //全部图片设为暗色
